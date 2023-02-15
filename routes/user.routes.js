@@ -16,8 +16,8 @@ router.post("/registro", async (req, res, next) => {
 
     const { username, password } = req.body;
     try {
-        const foundUser = await User.findOne({ username })
-        if (foundUser !== null) {
+        const usuario = await User.findOne({ username })
+        if (usuario !== null) {
             res.render("user/sign-user.hbs", {
                 error: "El nombre de usuario ya existe"
             });
@@ -52,30 +52,35 @@ router.post("/login", async (req, res, next) => {
         })
         return;
     }
-   try {
-    const usuario = await User.findOne({username: username})
-    if ( usuario === null){
-        res.render("user/login-user.hbs",{
-            error: "Usuario no existe"
+    try {
+        const usuario = await User.findOne({ username: username })
+        if (usuario === null) {
+            res.render("user/login-user.hbs", {
+                error: "Usuario o contraseña erronea"
+            })
+            return
+        }
+
+
+        req.session.activeUser = usuario
+        req.session.save(() => {
+
+            res.redirect("/profile");
         })
-        return
+
+    } catch (error) {
+        next(error)
     }
-
-
-    req.session.activeUser = usuario
-    req.session.save(() => {
-        
-        res.redirect("/user/profile");
-      })
-
-   } catch (error) {
-    next(error)
-   }
 })
- router.get("/profile", (req,res,next)=>{
+router.get("/profile", (req, res, next) => {
 
-res.render("profile/profile.hbs")
- })
+    res.render("profile/profile.hbs")
+})
+
+router.get("/logout", (req, res, next) => {
+    res.render("user/login-user.hbs");
+    req.session.destroy();
+  });
 
 module.exports = router;
 
