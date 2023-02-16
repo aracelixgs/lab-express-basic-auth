@@ -4,7 +4,7 @@ const { loggeado } = require("../middlewares/validation-middleware.js")
 
 
 
-router.get("/profile", loggeado, (req, res, next) => {
+router.get("/", loggeado, (req, res, next) => {
     res.render("profile/profile.hbs")
 })
 

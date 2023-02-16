@@ -61,6 +61,14 @@ router.post("/login", async (req, res, next) => {
             return
         }
 
+        const isPasswordCorrect = await bcrypt.compare(password, usuario.password)
+        if (isPasswordCorrect === false) {
+      res.render("user/login-user.hbs", {
+        error: "La contraseña no es correcta",
+      });
+      return; 
+    }
+
 
         req.session.activeUser = usuario
         req.session.save(() => {
@@ -72,15 +80,20 @@ router.post("/login", async (req, res, next) => {
         next(error)
     }
 })
-router.get("/profile", (req, res, next) => {
 
-    res.render("profile/profile.hbs")
-})
+
+// router.get("/logout", (req, res, next) => {
+//     res.render("user/login-user.hbs");
+//     req.session.destroy();
+//   });
 
 router.get("/logout", (req, res, next) => {
-    res.render("user/login-user.hbs");
-    req.session.destroy();
-  });
+
+    req.session.destroy(() => {
+      res.redirect("/")
+    })
+  
+  })
 
 module.exports = router;
 

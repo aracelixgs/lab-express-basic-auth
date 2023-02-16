@@ -8,4 +8,7 @@ router.get("/", (req, res, next) => {
 const userRoutes = require("./user.routes.js")
 router.use("/user", userRoutes)
 
+const profileRoutes = require("./profiles.routes.js")
+router.use("/profile", profileRoutes)
+
 module.exports = router;
